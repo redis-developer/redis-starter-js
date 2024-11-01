@@ -3,9 +3,6 @@ import { v4 as uuid } from "uuid";
 import getClient from "./redis.js";
 import { SchemaFieldTypes } from "redis";
 
-const TODOS_INDEX = "todos-idx";
-const TODOS_PREFIX = "todos:";
-
 /**
  * An error object
  * @typedef {Object} TodoError
@@ -32,6 +29,9 @@ const TODOS_PREFIX = "todos:";
  * @property {number} total
  * @property {TodoDocument[]} documents
  */
+
+const TODOS_INDEX = "todos-idx";
+const TODOS_PREFIX = "todos:";
 
 /**
  * Initializes todo index if necessary
