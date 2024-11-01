@@ -1,22 +1,21 @@
-import { RedisClientOptions, createClient } from "redis";
+import { createClient } from "redis";
 
 if (!process.env.REDIS_URL) {
   console.error("REDIS_URL not set");
 }
 
-const redisConfig = {
-  url: process.env.REDIS_URL as string,
-};
+let client = null;
 
-let client: ReturnType<typeof createClient> | null = null;
-
-export default async function getClient(
-  options?: RedisClientOptions,
-): Promise<ReturnType<typeof createClient>> {
+/**
+ * @param {import("redis").RedisClientOptions} [options]
+ *
+ * @returns {Promise<ReturnType<typeof createClient>>}
+ */
+export default async function getClient(options) {
   options = Object.assign(
     {},
     {
-      url: redisConfig.url,
+      url: process.env.REDIS_URL,
     },
     options,
   );
@@ -37,7 +36,7 @@ export default async function getClient(
   return client;
 }
 
-async function refreshClient(): Promise<void> {
+async function refreshClient() {
   if (client) {
     await client.disconnect();
     client = null;

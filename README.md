@@ -1,8 +1,7 @@
 This is a [Redis](https://redis.io/) starter template for JS and [Node](https://nodejs.org/) using:
 
 - [Redis Cloud](https://redis.io/try-free/)
-- [Next.js](https://nextjs.org)
-- [Tailwind CSS](https://tailwindcss.com/)
+- [Express](https://expressjs.com/)
 
 ## Getting started
 
@@ -10,33 +9,27 @@ Copy and edit the `.env` file:
 
 ```bash
 cp .env.example .env.docker
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Your `.env.local` file should contain the connection string you copied from Redis Cloud.
+Your `.env` file should contain the connection string you copied from Redis Cloud.
 
-Your `.env.docker` file will look similar to `.env.local`, but should use the appropriate docker internal URLs. Here is
+Your `.env.docker` file will look similar to `.env`, but should use the appropriate docker internal URLs. Here is
 an example:
 
 ```bash
 API_URL="http://app:3000"
-NEXT_PUBLIC_API_URL="http://localhost:3000"
 REDIS_URL="redis://redis:6379"
 ```
 
-Next, install dependencies:
-
-```bash
-npm i
-```
-
-Then, spin up docker containers:
+Next, spin up docker containers:
 
 ```bash
 docker compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can now edit the files in
+`./server` and it will update the docker container and restart the server.
 
 
 ## Running locally outside docker
