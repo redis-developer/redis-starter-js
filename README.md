@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Redis](https://redis.io/) starter template for JS and [Node](https://nodejs.org/) using:
 
-## Getting Started
+- [Redis Cloud](https://redis.io/try-free/)
+- [Next.js](https://nextjs.org)
+- [Tailwind CSS](https://tailwindcss.com/)
 
-First, run the development server:
+## Getting started
+
+Copy and edit the `.env` file:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.docker
+cp .env.example .env.local
+```
+
+Your `.env.local` file should contain the connection string you copied from Redis Cloud.
+
+Your `.env.docker` file will look similar to `.env.local`, but should use the appropriate docker internal URLs. Here is
+an example:
+
+```bash
+API_URL="http://app:3000"
+NEXT_PUBLIC_API_URL="http://localhost:3000"
+REDIS_URL="redis://redis:6379"
+```
+
+Next, install dependencies:
+
+```bash
+npm i
+```
+
+Then, spin up docker containers:
+
+```bash
+docker compose up -d
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Running locally outside docker
+To run the development server outside of docker:
 
-## Learn More
+```bash
+npm install
+# then
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Learn more
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To learn more about Redis, take a look at the following resources:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Redis Documentation](https://redis.io/docs/latest/) - learn about Redis products, features, and commands.
+- [Learn Redis](https://redis.io/learn/) - read tutorials, quick starts, and how-to guides for Redis.
+- [Redis Demo Center](https://redis.io/demo-center/) - watch short, technical videos about Redis products and features.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
