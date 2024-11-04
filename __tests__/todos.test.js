@@ -21,6 +21,7 @@ describe("Todos", () => {
 
   afterAll(async () => {
     await todos.delAll();
+    await todos.dropIndex();
   });
 
   test("CRUD for a single todo", async () => {

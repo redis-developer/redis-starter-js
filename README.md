@@ -31,6 +31,16 @@ docker compose up -d
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can now edit the files in
 `./server` and it will update the docker container and restart the server.
 
+## Running tests
+
+There are some tests in the `__tests__` folder that can be run with the following command:
+
+```bash
+npm test
+```
+
+These tests setup and teardown on their own. You can modify them if you want to leave data in Redis.
+
 ## Running locally outside docker
 
 To run the development server outside of docker:
@@ -39,6 +49,14 @@ To run the development server outside of docker:
 npm install
 # then
 npm run dev
+```
+
+## Other Scripts
+
+Formatting code:
+
+```bash
+npm run format
 ```
 
 ## Learn more

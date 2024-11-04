@@ -33,17 +33,19 @@ import { SchemaFieldTypes } from "redis";
 const TODOS_INDEX = "todos-idx";
 const TODOS_PREFIX = "todos:";
 
-/**
- * Initializes todo index if necessary
- */
-export async function initialize() {
+async function haveIndex() {
   const redis = await getClient();
   const indexes = await redis.ft._list();
-  const haveIndex = indexes.some((index) => {
+
+  return indexes.some((index) => {
     return index === TODOS_INDEX;
   });
+}
 
-  if (!haveIndex) {
+export async function createIndexIfNotExists() {
+  const redis = await getClient();
+
+  if (!(await haveIndex())) {
     await redis.ft.create(
       TODOS_INDEX,
       {
@@ -62,6 +64,21 @@ export async function initialize() {
       },
     );
   }
+}
+
+export async function dropIndex() {
+  const redis = await getClient();
+
+  if (await haveIndex()) {
+    await redis.ft.dropIndex(TODOS_INDEX);
+  }
+}
+
+/**
+ * Initializes todo index if necessary
+ */
+export async function initialize() {
+  await createIndexIfNotExists();
 }
 
 /**
