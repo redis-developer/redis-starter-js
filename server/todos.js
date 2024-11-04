@@ -33,6 +33,11 @@ import { SchemaFieldTypes } from "redis";
 const TODOS_INDEX = "todos-idx";
 const TODOS_PREFIX = "todos:";
 
+/**
+ * Checks if the TODOS_INDEX already exists in Redis
+ *
+ * @returns {Promise<string[]>}
+ */
 async function haveIndex() {
   const redis = await getClient();
   const indexes = await redis.ft._list();
@@ -42,6 +47,11 @@ async function haveIndex() {
   });
 }
 
+/**
+ * Creates the TODOS_INDEX if it doesn't exist already
+ *
+ * @returns {Promise<void>}
+ */
 export async function createIndexIfNotExists() {
   const redis = await getClient();
 
@@ -66,6 +76,11 @@ export async function createIndexIfNotExists() {
   }
 }
 
+/**
+ * Dropes the TODOS_INDEX if it exists
+ *
+ * @returns {Promise<void>}
+ */
 export async function dropIndex() {
   const redis = await getClient();
 
@@ -76,6 +91,8 @@ export async function dropIndex() {
 
 /**
  * Initializes todo index if necessary
+ *
+ * @returns {Promise<void>}
  */
 export async function initialize() {
   await createIndexIfNotExists();
@@ -83,6 +100,7 @@ export async function initialize() {
 
 /**
  * Allow for id with or without todos: prefix
+ *
  * @param {string} id
  * @returns {string}
  */
@@ -144,6 +162,7 @@ export async function search(name, status) {
 }
 
 /**
+ * Create a todo
  *
  * @param {string} [id]
  * @param {string} [name]
@@ -211,6 +230,7 @@ export async function update(id, status) {
 
 /**
  * Delete a todo
+ *
  * @param {string} id
  */
 export async function del(id) {
@@ -221,6 +241,8 @@ export async function del(id) {
 
 /**
  * Delete all todos
+ *
+ * @returns {Promise<void>}
  */
 export async function delAll() {
   const redis = await getClient();
