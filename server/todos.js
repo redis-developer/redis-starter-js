@@ -65,11 +65,20 @@ export async function initialize() {
 }
 
 /**
+ * Allow for id with or without todos: prefix
+ * @param {string} id
+ * @returns {string}
+ */
+function formatId(id) {
+  return /todos/.test(id) ? id : `${TODOS_PREFIX}${id}`
+}
+
+/**
  * Gets all todos
  *
  * @returns {Promise<Todos>}
  */
-async function all() {
+export async function all() {
   const redis = await getClient();
 
   return /** @type {Promise<Todos>} */ (redis.ft.search(TODOS_INDEX, "*"));
@@ -81,12 +90,10 @@ async function all() {
  * @param {string} id
  * @returns {Promise<Todo | TodoError | null>}
  */
-async function one(id) {
+export async function one(id) {
   const redis = await getClient();
 
-  const todo = await redis.json.get(
-    /todos/.test(id) ? id : `${TODOS_PREFIX}${id}`
-  );
+  const todo = await redis.json.get(formatId(id));
 
   if (!todo) {
     return { status: 404, message: "Not Found" };
@@ -102,7 +109,7 @@ async function one(id) {
  * @param {string} [status]
  * @returns {Promise<Todos>}
  */
-async function search(name, status) {
+export async function search(name, status) {
   const redis = await getClient();
   const searches = [];
 
@@ -125,7 +132,7 @@ async function search(name, status) {
  * @param {string} [name]
  * @returns {Promise<TodoDocument | TodoError>}
  */
-async function create(id, name) {
+export async function create(id, name) {
   const redis = await getClient();
   const date = new Date();
 
@@ -137,7 +144,7 @@ async function create(id, name) {
    * @type {TodoDocument}
    */
   const todo = {
-    id: `${TODOS_PREFIX}${id ?? uuid()}`,
+    id: formatId(id ?? uuid()),
     value: {
       name,
       status: "todo",
@@ -162,7 +169,7 @@ async function create(id, name) {
  * @param {TodoStatus} status
  * @returns {Promise<Todo | TodoError>}
  */
-async function update(id, status) {
+export async function update(id, status) {
   const redis = await getClient();
   const date = new Date();
 
@@ -177,7 +184,7 @@ async function update(id, status) {
   todo.updated_date = date.toISOString();
 
   const result = await redis.json.set(
-    `${TODOS_PREFIX}${id ?? uuid()}`,
+    formatId(id),
     "$",
     todo
   );
@@ -186,6 +193,28 @@ async function update(id, status) {
     return todo;
   } else {
     return { status: 400, message: "Todo is invalid" };
+  }
+}
+
+/**
+ * Delete a todo
+ * @param {string} id
+ */
+export async function del(id) {
+  const redis = await getClient();
+
+  await redis.json.del(formatId(id));
+}
+
+/**
+ * Delete all todos
+ */
+export async function delAll() {
+  const redis = await getClient();
+  const todos = await all();
+
+  if (todos.total > 0) {
+    await redis.del(todos.documents.map((todo) => todo.id));
   }
 }
 
@@ -224,6 +253,7 @@ function handler(fn) {
         res.json(result);
       }
     } catch (e) {
+      console.log(e);
       res.status(500).json(e);
     }
   };
@@ -270,5 +300,14 @@ router.patch(
     const { status } = req.body;
 
     return update(id, status);
+  })
+);
+
+router.delete(
+  "/:id",
+  handler(async (req) => {
+    const { id } = req.params;
+
+    return del(id);
   })
 );
