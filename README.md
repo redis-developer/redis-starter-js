@@ -70,6 +70,26 @@ Formatting code:
 npm run format
 ```
 
+## Connecting to Redis Cloud
+
+If you don't yet have a database setup in Redis Cloud [get started here for free](https://redis.io/try-free/).
+
+To connect to a Redis Cloud database, log into the console and find the following:
+
+1. The `public endpoint` (looks like `redis-#####.c###.us-east-1-#.ec2.redns.redis-cloud.com:#####`)
+1. Your `username` (`default` is the default username, otherwise find the one you setup)
+1. Your `password` (either setup through Data Access Control, or available in the `Security` section of the database
+   page.
+
+Combine the above values into a connection string and put it in your `.env` and `.env.docker` accordingly. It should
+look something like the following:
+
+```bash
+REDIS_URL="redis://default:<password>@redis-#####.c###.us-west-2-#.ec2.redns.redis-cloud.com:#####"
+```
+
+Run the [tests](#running-tests) to verify that you are connected properly.
+
 ## Learn more
 
 To learn more about Redis, take a look at the following resources:
