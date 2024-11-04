@@ -31,8 +31,8 @@ docker compose up -d
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can now edit the files in
 `./server` and it will update the docker container and restart the server.
 
-
 ## Running locally outside docker
+
 To run the development server outside of docker:
 
 ```bash
@@ -48,4 +48,3 @@ To learn more about Redis, take a look at the following resources:
 - [Redis Documentation](https://redis.io/docs/latest/) - learn about Redis products, features, and commands.
 - [Learn Redis](https://redis.io/learn/) - read tutorials, quick starts, and how-to guides for Redis.
 - [Redis Demo Center](https://redis.io/demo-center/) - watch short, technical videos about Redis products and features.
-

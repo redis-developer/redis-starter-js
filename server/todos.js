@@ -59,7 +59,7 @@ export async function initialize() {
       {
         ON: "JSON",
         PREFIX: TODOS_PREFIX,
-      }
+      },
     );
   }
 }
@@ -70,7 +70,7 @@ export async function initialize() {
  * @returns {string}
  */
 function formatId(id) {
-  return /todos/.test(id) ? id : `${TODOS_PREFIX}${id}`
+  return /todos/.test(id) ? id : `${TODOS_PREFIX}${id}`;
 }
 
 /**
@@ -175,7 +175,7 @@ export async function update(id, status) {
 
   const todoOrError = await one(id);
 
-  if (!todoOrError || isFinite(/** @type {number} */(todoOrError.status))) {
+  if (!todoOrError || isFinite(/** @type {number} */ (todoOrError.status))) {
     return { status: 404, message: "Not Found" };
   }
 
@@ -183,11 +183,7 @@ export async function update(id, status) {
   todo.status = status;
   todo.updated_date = date.toISOString();
 
-  const result = await redis.json.set(
-    formatId(id),
-    "$",
-    todo
-  );
+  const result = await redis.json.set(formatId(id), "$", todo);
 
   if (result?.toUpperCase() === "OK") {
     return todo;
@@ -263,7 +259,7 @@ router.get(
   "/",
   handler(async () => {
     return all();
-  })
+  }),
 );
 
 router.get(
@@ -272,7 +268,7 @@ router.get(
     const { id } = req.params;
 
     return one(id);
-  })
+  }),
 );
 
 router.post(
@@ -281,7 +277,7 @@ router.post(
     const { name, status } = req.body;
 
     return search(name, status);
-  })
+  }),
 );
 
 router.post(
@@ -290,7 +286,7 @@ router.post(
     const { name, id } = req.body;
 
     return create(id, name);
-  })
+  }),
 );
 
 router.patch(
@@ -300,7 +296,7 @@ router.patch(
     const { status } = req.body;
 
     return update(id, status);
-  })
+  }),
 );
 
 router.delete(
@@ -309,5 +305,5 @@ router.delete(
     const { id } = req.params;
 
     return del(id);
-  })
+  }),
 );

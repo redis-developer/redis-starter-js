@@ -1,4 +1,11 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+} from "vitest";
 import request from "supertest";
 import app from "../server/app.js";
 import * as todos from "../server/todos.js";
@@ -43,23 +50,25 @@ describe("Todos", () => {
 
     expect(updateResult.name).toBe(readResult.name);
     expect(updateResult.status).toBe("complete");
-    expect((new Date(updateResult.updated_date)) > (new Date(updateResult.created_date))).toBe(true);
-    expect((new Date(updateResult.updated_date)) > (new Date(readResult.updated_date))).toBe(true);
+    expect(
+      new Date(updateResult.updated_date) > new Date(updateResult.created_date),
+    ).toBe(true);
+    expect(
+      new Date(updateResult.updated_date) > new Date(readResult.updated_date),
+    ).toBe(true);
 
-    await request(app)
-      .delete(`/api/todos/${todoId}`)
-      .send()
-      .expect(200);
+    await request(app).delete(`/api/todos/${todoId}`).send().expect(200);
   });
 
   test("Create and read multiple todos", async () => {
-    const todos = ["Take out the trash", "Vacuum downstairs", "Fold the laundry"];
+    const todos = [
+      "Take out the trash",
+      "Vacuum downstairs",
+      "Fold the laundry",
+    ];
 
     for (const todo of todos) {
-      await request(app)
-        .post("/api/todos")
-        .send({ name: todo })
-        .expect(200);
+      await request(app).post("/api/todos").send({ name: todo }).expect(200);
     }
 
     const { body: allTodos } = await request(app)

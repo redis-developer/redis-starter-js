@@ -7,8 +7,7 @@ export async function initialize() {
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 app.use("/api/todos", todos.router);
 
 export default app;
-
