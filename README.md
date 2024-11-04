@@ -31,6 +31,17 @@ docker compose up -d
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can now edit the files in
 `./server` and it will update the docker container and restart the server.
 
+## Running production docker
+
+There is a single `Dockerfile` setup to run in `dev` mode and `prod` mode. By default the `docker-compose.yml` file
+uses `dev` mode. This will run a server that watches the files for changes and restarts accordingly. When deploying,
+you will want to run in `prod` mode. To do that remove the following lines in the `docker-compose.yaml` file:
+
+```yaml
+target: dev
+command: npm run dev
+```
+
 ## Running tests
 
 There are some tests in the `__tests__` folder that can be run with the following command:
