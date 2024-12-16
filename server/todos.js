@@ -36,7 +36,7 @@ const TODOS_PREFIX = "todos:";
 /**
  * Checks if the TODOS_INDEX already exists in Redis
  *
- * @returns {Promise<string[]>}
+ * @returns {Promise<boolean>}
  */
 async function haveIndex() {
   const redis = await getClient();
