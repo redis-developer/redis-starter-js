@@ -18,7 +18,6 @@ Your `.env.docker` file will look similar to `.env`, but should use the appropri
 an example:
 
 ```bash
-API_URL="http://app:3000"
 REDIS_URL="redis://redis:6379"
 ```
 
@@ -28,19 +27,14 @@ Next, spin up docker containers:
 docker compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can now edit the files in
-`./server` and it will update the docker container and restart the server.
+You should have a server running on `http://localhost:<port>` where the port is set in your `.env` file (default is 3000). You can test the following routes:
 
-## Running production docker
-
-There is a single `Dockerfile` setup to run in `dev` mode and `prod` mode. By default the `docker-compose.yml` file
-uses `dev` mode. This will run a server that watches the files for changes and restarts accordingly. When deploying,
-you will want to run in `prod` mode. To do that remove the following lines in the `docker-compose.yaml` file:
-
-```yaml
-target: dev
-command: npm run dev
-```
+1. `GET /api/todos` - Gets all todos
+2. `GET /api/todos/:id` - Gets a todo by ID
+3. `GET /api/todos?[name=<name>]&[status=<status>]` - Search for todos by name and/or status
+4. `POST /api/todos` - Create a todo with `{ "name": "Sample todo" }`
+5. `PATCH /api/todos/:id` - Update todo by ID with `{ "status": "todo|in progress|complete" }`
+6. `DELETE /api/todos/:id` - Delete a todo by ID
 
 ## Running tests
 
