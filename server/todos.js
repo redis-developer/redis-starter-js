@@ -310,10 +310,10 @@ router.get(
   }),
 );
 
-router.post(
+router.get(
   "/search",
   handler(async (req) => {
-    const { name, status } = req.body;
+    const { name, status } = req.params;
 
     return search(name, status);
   }),
