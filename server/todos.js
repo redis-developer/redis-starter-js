@@ -98,6 +98,8 @@ export async function initialize() {
   await createIndexIfNotExists();
 }
 
+const TODO_REGEXP = new RegExp(`^${TODOS_PREFIX}`);
+
 /**
  * Allow for id with or without todos: prefix
  *
@@ -105,7 +107,7 @@ export async function initialize() {
  * @returns {string}
  */
 function formatId(id) {
-  return /todos/.test(id) ? id : `${TODOS_PREFIX}${id}`;
+  return TODO_REGEXP.test(id) ? id : `${TODOS_PREFIX}${id}`;
 }
 
 /**
