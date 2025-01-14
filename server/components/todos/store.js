@@ -100,7 +100,7 @@ export async function initialize() {
 const TODO_REGEXP = new RegExp(`^${TODOS_PREFIX}`);
 
 /**
- * Allow for id with or without todos: prefix
+ * Allow for id with or without TODOS_PREFIX
  *
  * @param {string} id
  * @returns {string}
@@ -121,7 +121,7 @@ export async function all() {
 }
 
 /**
- * Get a todo by id
+ * Gets a todo by id
  *
  * @param {string} id
  * @returns {Promise<Todo | TodoError | null>}
@@ -139,7 +139,7 @@ export async function one(id) {
 }
 
 /**
- * Search for todos by name and/or status
+ * Searches for todos by name and/or status
  *
  * @param {string} [name]
  * @param {string} [status]
@@ -163,7 +163,7 @@ export async function search(name, status) {
 }
 
 /**
- * Create a todo
+ * Creates a todo
  *
  * @param {string} [id]
  * @param {string} [name]
@@ -200,7 +200,7 @@ export async function create(id, name) {
 }
 
 /**
- * Update a todo
+ * Updates a todo
  *
  * @param {string} id
  * @param {TodoStatus} status
@@ -230,7 +230,7 @@ export async function update(id, status) {
 }
 
 /**
- * Delete a todo
+ * Deletes a todo
  *
  * @param {string} id
  */
