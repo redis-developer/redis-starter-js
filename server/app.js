@@ -1,5 +1,5 @@
 import express from "express";
-import * as todos from "./todos.js";
+import * as todos from "./components/todos/index.js";
 
 export async function initialize() {
   await todos.initialize();

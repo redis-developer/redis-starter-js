@@ -8,7 +8,7 @@ import {
 } from "vitest";
 import request from "supertest";
 import app from "../server/app.js";
-import * as todos from "../server/todos.js";
+import * as todos from "../server/components/todos/store.js";
 
 describe("Todos", () => {
   beforeAll(async () => {
