@@ -4,6 +4,9 @@
   "main": "server/index.js",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "nodemon -w server/ .",
     "format": "prettier . --write",

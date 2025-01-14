@@ -3,6 +3,12 @@ This is a [Redis](https://redis.io/) starter template for JS and [Node](https://
 - [Redis Cloud](https://redis.io/try-free/)
 - [Express](https://expressjs.com/)
 
+## Requirements
+
+- [node>=22](https://nodejs.org/)
+- [docker](https://www.docker.com/)
+   - Optional
+
 ## Getting started
 
 Copy and edit the `.env` file:
