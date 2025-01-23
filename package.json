@@ -8,21 +8,19 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "nodemon -w server/ .",
+    "dev": "bun run --watch .",
     "format": "prettier . --write",
-    "start": "node .",
-    "test": "vitest run"
+    "start": "bun ."
   },
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "redis": "^4.7.0",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
-    "supertest": "^7.0.0",
-    "vitest": "^2.1.8"
+    "supertest": "^7.0.0"
   }
 }

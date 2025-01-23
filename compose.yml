@@ -18,15 +18,15 @@ services:
       context: ./
       dockerfile: ./Dockerfile
       target: dev
-    command: npm run dev
+    command: bun dev
     ports:
       - 3000:3000
     env_file:
       - ./.env
       - ./.env.docker
     volumes:
-      - ./server:/app/server
-      - /app/node_modules
+      - ./server:/usr/src/app/server
+      - /usr/src/app/node_modules
     restart: always
     depends_on:
       - redis

@@ -1,5 +1,5 @@
 import express from "express";
-import { all, one, search, create, update, del } from "./store";
+import { all, one, search, create, update, del } from "./store.js";
 
 export const router = express.Router();
 

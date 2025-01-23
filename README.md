@@ -5,9 +5,9 @@ This is a [Redis](https://redis.io/) starter template for JS and [Node](https://
 
 ## Requirements
 
-- [node>=22](https://nodejs.org/)
+- [bun](https://bun.sh/)
 - [docker](https://www.docker.com/)
-   - Optional
+  - Optional
 
 ## Getting started
 
@@ -46,7 +46,7 @@ You should have a server running on `http://localhost:<port>` where the port is 
 There are some tests in the `__tests__` folder that can be run with the following command:
 
 ```bash
-npm test
+bun test
 ```
 
 These tests setup and teardown on their own. You can modify them if you want to leave data in Redis.
@@ -56,9 +56,9 @@ These tests setup and teardown on their own. You can modify them if you want to 
 To run the development server outside of docker:
 
 ```bash
-npm install
+bun install
 # then
-npm run dev
+bun dev
 ```
 
 ## Other Scripts
@@ -66,7 +66,7 @@ npm run dev
 Formatting code:
 
 ```bash
-npm run format
+bun format
 ```
 
 ## Connecting to Redis Cloud

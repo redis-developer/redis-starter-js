@@ -1,2 +1,2 @@
-export * from './router';
-export { initialize } from './store';
+export * from "./router.js";
+export { initialize } from "./store.js";

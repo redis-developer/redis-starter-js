@@ -7,7 +7,13 @@ export async function initialize() {
 
 const app = express();
 
-app.use(express.json());
+app.use((req, res, next) => {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    express.json({ limit: "10mb" })(req, res, next);
+  } else {
+    next();
+  }
+});
 app.use("/api/todos", todos.router);
 
 export default app;
