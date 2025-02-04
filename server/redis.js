@@ -4,7 +4,8 @@ if (!process.env.REDIS_URL) {
   console.error("REDIS_URL not set");
 }
 
-let client = null;
+/** @type {Record<string, ReturnType<typeof createClient>>} */
+let clients = {};
 
 /**
  * @param {import("redis").RedisClientOptions} [options]
@@ -20,7 +21,13 @@ export default async function getClient(options) {
     options,
   );
 
-  if (client && client.options?.url === options.url) {
+  if (!options.url) {
+    throw new Error("You must pass a URL to connect");
+  }
+
+  let client = clients[options.url];
+
+  if (client) {
     return client;
   }
 
@@ -29,18 +36,28 @@ export default async function getClient(options) {
   client
     .on("error", (err) => {
       console.error("Redis Client Error", err);
-      void refreshClient();
+      void refreshClient(client);
     })
     .connect();
+
+  clients[options.url] = client;
 
   return client;
 }
 
-async function refreshClient() {
+/**
+ * @param {ReturnType<typeof createClient>} client
+ */
+async function refreshClient(client) {
   if (client) {
-    await client.disconnect();
-    client = null;
-  }
+    const options = client.options;
 
-  client = await getClient();
+    if (options?.url) {
+      delete clients[options?.url];
+    }
+
+    await client.disconnect();
+
+    await getClient(options);
+  }
 }
