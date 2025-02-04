@@ -10,7 +10,9 @@
   "scripts": {
     "dev": "bun run --watch .",
     "format": "prettier . --write",
-    "start": "bun ."
+    "start": "bun .",
+    "docker": "docker compose down && bun docker:prune && docker compose up -d",
+    "docker:prune": "docker image prune -a -f && docker volume prune -a -f && docker builder prune -a -f"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

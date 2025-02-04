@@ -29,7 +29,7 @@ REDIS_URL="redis://redis:6379"
 Next, spin up docker containers:
 
 ```bash
-docker compose up -d
+bun docker
 ```
 
 You should have a server running on `http://localhost:<port>` where the port is set in your `.env` file (default is 3000). You can test the following routes:
