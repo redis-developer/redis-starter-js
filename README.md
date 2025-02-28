@@ -32,7 +32,7 @@ Next, spin up docker containers:
 bun docker
 ```
 
-You should have a server running on `http://localhost:<port>` where the port is set in your `.env` file (default is 3000). You can test the following routes:
+You should have a server running on `http://localhost:<port>` where the port is set in your `.env` file (default is 8080). You can test the following routes:
 
 1. `GET /api/todos` - Gets all todos
 2. `GET /api/todos/:id` - Gets a todo by ID
@@ -67,6 +67,12 @@ Formatting code:
 
 ```bash
 bun format
+```
+
+Updating dependencies:
+
+```bash
+bun update
 ```
 
 ## Connecting to Redis Cloud
