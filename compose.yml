@@ -27,7 +27,7 @@ services:
     volumes:
       - ./server:/usr/src/app/server
       - /usr/src/app/node_modules
-    restart: always
+    restart: unless-stopped
     depends_on:
       - redis
 

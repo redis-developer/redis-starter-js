@@ -66,7 +66,7 @@ export async function createIndexIfNotExists(): Promise<void> {
       {
         ON: "JSON",
         PREFIX: TODOS_PREFIX,
-      }
+      },
     );
   }
 }
@@ -149,7 +149,7 @@ export async function search(name: string, status: TodoStatus): Promise<Todos> {
  */
 export async function create(
   id: string,
-  name: string
+  name: string,
 ): Promise<TodoDocument | TodoError> {
   const redis = await getClient();
   const date = new Date();
@@ -158,10 +158,7 @@ export async function create(
     return { status: 400, message: "Todo must have a name" };
   }
 
-  /**
-   * @type {TodoDocument}
-   */
-  const todo = {
+  const todo: TodoDocument = {
     id: formatId(id ?? uuid()),
     value: {
       name,
@@ -185,7 +182,7 @@ export async function create(
  */
 export async function update(
   id: string,
-  status: TodoStatus
+  status: TodoStatus,
 ): Promise<TodoError | Todo> {
   const redis = await getClient();
   const date = new Date();

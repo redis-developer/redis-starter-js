@@ -5,7 +5,9 @@ import type { TodoStatus } from "./store.js";
 
 export const router = express.Router();
 
-function handler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
+function handler(
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>,
+) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       let nextCalled = false;
