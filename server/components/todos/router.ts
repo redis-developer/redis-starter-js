@@ -1,26 +1,12 @@
 import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import { all, one, search, create, update, del } from "./store.js";
+import type { TodoStatus } from "./store.js";
 
 export const router = express.Router();
 
-/**
- * @typedef {import("express").Request} Request
- * @typedef {import("express").Response} Response
- * @typedef {import("express").NextFunction} NextFunction
- */
-
-/**
- *
- * @param {(req: Request, res: Response, next: NextFunction) => Promise<any>} fn
- * @returns
- */
-function handler(fn) {
-  /**
-   * @param {Request} req
-   * @param {Response} res
-   * @param {NextFunction} next
-   */
-  return async (req, res, next) => {
+function handler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       let nextCalled = false;
       const result = await fn(req, res, (...args) => {
@@ -54,7 +40,7 @@ router.get(
   handler(async (req) => {
     const { name, status } = req.params;
 
-    return search(name, status);
+    return search(name, status as TodoStatus);
   }),
 );
 
