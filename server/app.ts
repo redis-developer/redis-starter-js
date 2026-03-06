@@ -1,7 +1,9 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
+import { pinoHttp } from "pino-http";
 import { ZodError } from "zod";
 import { ClientError } from "./errors.js";
+import { log, httpLog } from "./log.js";
 import * as todos from "./components/todos/index.js";
 
 export async function initialize() {
@@ -10,6 +12,7 @@ export async function initialize() {
 
 export const app = express();
 
+app.use(pinoHttp({ logger: httpLog }));
 app.use((req, res, next) => {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
     express.json({ limit: "10mb" })(req, res, next);
@@ -32,7 +35,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
       message: err.message,
     });
   } else {
-    console.error(err);
+    log.error(err, "Unhandled error");
     res.status(500).json({ status: 500, message: "Internal Server Error" });
   }
 });

@@ -1,11 +1,9 @@
 import { createClient } from "redis";
+import { config } from "./config.js";
+import { log } from "./log.js";
 
-if (!process.env.REDIS_URL) {
-  console.error("REDIS_URL not set");
-}
-
-export const redis = await createClient({ url: process.env.REDIS_URL })
+export const redis = await createClient({ url: config.REDIS_URL })
   .on("error", (err) => {
-    console.log("Redis Client Error", err);
+    log.error(err, "Redis Client Error");
   })
   .connect();
