@@ -8,7 +8,7 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: unless-stopped
     volumes:
       - redis-data:/data
 
@@ -21,9 +21,9 @@ services:
     command: bun dev
     ports:
       - 8080:8080
-    env_file:
-      - ./.env
-      - ./.env.docker
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
     volumes:
       - ./server:/usr/src/app/server
       - /usr/src/app/node_modules

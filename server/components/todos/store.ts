@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
-import getClient from "../../redis.js";
-import { SCHEMA_FIELD_TYPE } from "redis";
+import redis from "../../redis.js";
+import { RedisJSON, SCHEMA_FIELD_TYPE } from "redis";
 
 /**
  * An error object
@@ -36,7 +36,6 @@ const TODOS_PREFIX = "todos:";
  * Checks if the TODOS_INDEX already exists in Redis
  */
 async function haveIndex(): Promise<boolean> {
-  const redis = await getClient();
   const indexes = await redis.ft._list();
 
   return indexes.some((index) => {
@@ -48,8 +47,6 @@ async function haveIndex(): Promise<boolean> {
  * Creates the TODOS_INDEX if it doesn't exist already
  */
 export async function createIndexIfNotExists(): Promise<void> {
-  const redis = await getClient();
-
   if (!(await haveIndex())) {
     await redis.ft.create(
       TODOS_INDEX,
@@ -75,8 +72,6 @@ export async function createIndexIfNotExists(): Promise<void> {
  * Drops the TODOS_INDEX if it exists
  */
 export async function dropIndex(): Promise<void> {
-  const redis = await getClient();
-
   if (await haveIndex()) {
     await redis.ft.dropIndex(TODOS_INDEX);
   }
@@ -102,8 +97,6 @@ function formatId(id: string): string {
  * Gets all todos}
  */
 export async function all(): Promise<Todos> {
-  const redis = await getClient();
-
   const results = await redis.ft.search(TODOS_INDEX, "*");
 
   return results as unknown as Todos;
@@ -113,8 +106,6 @@ export async function all(): Promise<Todos> {
  * Gets a todo by id
  */
 export async function one(id: string): Promise<Todo | TodoError | null> {
-  const redis = await getClient();
-
   const todo = await redis.json.get(formatId(id));
 
   if (!todo) {
@@ -128,7 +119,6 @@ export async function one(id: string): Promise<Todo | TodoError | null> {
  * Searches for todos by name and/or status
  */
 export async function search(name: string, status: TodoStatus): Promise<Todos> {
-  const redis = await getClient();
   const searches = [];
 
   if (name) {
@@ -151,7 +141,6 @@ export async function create(
   id: string,
   name: string,
 ): Promise<TodoDocument | TodoError> {
-  const redis = await getClient();
   const date = new Date();
 
   if (!name) {
@@ -168,7 +157,11 @@ export async function create(
     },
   };
 
-  const result = await redis.json.set(todo.id, "$", todo.value);
+  const result = await redis.json.set(
+    todo.id,
+    "$",
+    todo.value as unknown as RedisJSON,
+  );
 
   if (result?.toUpperCase() === "OK") {
     return todo as TodoDocument;
@@ -184,7 +177,6 @@ export async function update(
   id: string,
   status: TodoStatus,
 ): Promise<TodoError | Todo> {
-  const redis = await getClient();
   const date = new Date();
 
   const todoOrError = await one(id);
@@ -210,8 +202,6 @@ export async function update(
  * Deletes a todo
  */
 export async function del(id: string): Promise<void> {
-  const redis = await getClient();
-
   await redis.json.del(formatId(id));
 }
 
@@ -219,7 +209,6 @@ export async function del(id: string): Promise<void> {
  * Delete all todos
  */
 export async function delAll(): Promise<void> {
-  const redis = await getClient();
   const todos = await all();
 
   if (todos.total > 0) {
