@@ -2,14 +2,7 @@ import { v4 as uuid } from "uuid";
 import { redis } from "../../redis.js";
 import { SCHEMA_FIELD_TYPE } from "redis";
 import type { RedisJSON } from "redis";
-
-/**
- * An error object
- */
-export interface TodoError {
-  status: number;
-  message: string;
-}
+import { ClientError } from "../../errors.js";
 
 export type TodoStatus = "todo" | "in progress" | "complete";
 
@@ -28,16 +21,6 @@ export interface TodoDocument {
 export interface Todos {
   total: number;
   documents: TodoDocument[];
-}
-
-/** Checks whether a value is a TodoError response */
-export function isTodoError(value: unknown): value is TodoError {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "status" in value &&
-    typeof (value as Record<string, unknown>).status === "number"
-  );
 }
 
 const TODOS_INDEX = "todos-idx";
@@ -112,11 +95,11 @@ export async function all(): Promise<Todos> {
 /**
  * Gets a todo by id
  */
-export async function one(id: string): Promise<Todo | TodoError> {
+export async function one(id: string): Promise<Todo> {
   const todo = await redis.json.get(formatId(id));
 
   if (!todo) {
-    return { status: 404, message: "Not Found" };
+    throw new ClientError(404, "Not Found");
   }
 
   return todo as unknown as Todo;
@@ -125,14 +108,17 @@ export async function one(id: string): Promise<Todo | TodoError> {
 /**
  * Searches for todos by name and/or status
  */
-export async function search(name: string, status: TodoStatus): Promise<Todos> {
+export async function search(
+  name?: string,
+  status?: TodoStatus,
+): Promise<Todos> {
   const searches: string[] = [];
 
   if (name) {
     searches.push(`@name:(${name})`);
   }
 
-  if (status && ["todo", "in progress", "complete"].includes(status)) {
+  if (status) {
     searches.push(`@status:"${status}"`);
   }
 
@@ -145,14 +131,10 @@ export async function search(name: string, status: TodoStatus): Promise<Todos> {
  * Creates a todo
  */
 export async function create(
-  id: string,
+  id: string | undefined,
   name: string,
-): Promise<TodoDocument | TodoError> {
+): Promise<TodoDocument> {
   const date = new Date();
-
-  if (!name) {
-    return { status: 400, message: "Todo must have a name" };
-  }
 
   const todo: TodoDocument = {
     id: formatId(id ?? uuid()),
@@ -170,29 +152,20 @@ export async function create(
     todo.value as unknown as RedisJSON,
   );
 
-  if (result?.toUpperCase() === "OK") {
-    return todo as TodoDocument;
-  } else {
-    return { status: 400, message: "Todo is invalid" };
+  if (result?.toUpperCase() !== "OK") {
+    throw new ClientError(400, "Todo is invalid");
   }
+
+  return todo;
 }
 
 /**
  * Updates a todo
  */
-export async function update(
-  id: string,
-  status: TodoStatus,
-): Promise<TodoError | Todo> {
+export async function update(id: string, status: TodoStatus): Promise<Todo> {
   const date = new Date();
 
-  const todoOrError = await one(id);
-
-  if (!todoOrError || isTodoError(todoOrError)) {
-    return { status: 404, message: "Not Found" };
-  }
-
-  const todo = todoOrError;
+  const todo = await one(id);
   todo.status = status;
   todo.updatedDate = date.toISOString();
 
@@ -202,11 +175,11 @@ export async function update(
     todo as unknown as RedisJSON,
   );
 
-  if (result?.toUpperCase() === "OK") {
-    return todo;
-  } else {
-    return { status: 400, message: "Todo is invalid" };
+  if (result?.toUpperCase() !== "OK") {
+    throw new ClientError(400, "Todo is invalid");
   }
+
+  return todo;
 }
 
 /**

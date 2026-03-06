@@ -1,88 +1,29 @@
 import express from "express";
-import type { Request, Response, NextFunction } from "express";
-import { all, one, search, create, update, del, isTodoError } from "./store.js";
-import type { TodoStatus } from "./store.js";
+import type { Request, Response } from "express";
+import * as controller from "./controller.js";
 
 export const router = express.Router();
 
-function handler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      let nextCalled = false;
-      const result = await fn(req, res, (err?) => {
-        nextCalled = true;
-        if (err !== undefined) {
-          next(err);
-        } else {
-          next();
-        }
-      });
+router.get("/", async (_req: Request, res: Response) => {
+  res.json(await controller.getAll());
+});
 
-      if (nextCalled) {
-        return;
-      } else if (isTodoError(result)) {
-        res.status(result.status).json(result);
-      } else {
-        res.json(result);
-      }
-    } catch (e) {
-      console.log(e);
-      res.status(500).json(e);
-    }
-  };
-}
+router.get("/search", async (req: Request, res: Response) => {
+  res.json(await controller.search(req.query));
+});
 
-router.get(
-  "/",
-  handler(async () => {
-    return all();
-  }),
-);
+router.get("/:id", async (req: Request, res: Response) => {
+  res.json(await controller.getOne(req.params));
+});
 
-router.get(
-  "/search",
-  handler(async (req) => {
-    const { name, status } = req.params;
+router.post("/", async (req: Request, res: Response) => {
+  res.json(await controller.create(req.body));
+});
 
-    return search(name, status as TodoStatus);
-  }),
-);
+router.patch("/:id", async (req: Request, res: Response) => {
+  res.json(await controller.update(req.params, req.body));
+});
 
-router.get(
-  "/:id",
-  handler(async (req) => {
-    const { id } = req.params;
-
-    return one(id);
-  }),
-);
-
-router.post(
-  "/",
-  handler(async (req) => {
-    const { name, id } = req.body;
-
-    return create(id, name);
-  }),
-);
-
-router.patch(
-  "/:id",
-  handler(async (req) => {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    return update(id, status);
-  }),
-);
-
-router.delete(
-  "/:id",
-  handler(async (req) => {
-    const { id } = req.params;
-
-    return del(id);
-  }),
-);
+router.delete("/:id", async (req: Request, res: Response) => {
+  res.json(await controller.del(req.params));
+});
