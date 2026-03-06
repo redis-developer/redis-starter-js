@@ -1,6 +1,6 @@
 {
   "name": "redis-js-starter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "server/index.js",
   "type": "module",
   "private": true,
@@ -11,7 +11,7 @@
     "dev": "bun run --watch .",
     "format": "prettier . --write",
     "start": "bun .",
-    "docker": "docker compose down && docker compose up -d --build"
+    "docker": "docker compose --env-file /dev/null up -d --build"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
