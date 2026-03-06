@@ -6,7 +6,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  const { default: redis } = await import("./server/redis.js");
+  const { redis } = await import("./server/redis.js");
   await redis.close();
 
   await $`docker compose down redis`;

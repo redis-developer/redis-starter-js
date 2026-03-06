@@ -1,24 +1,28 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
-import { all, one, search, create, update, del } from "./store.js";
+import { all, one, search, create, update, del, isTodoError } from "./store.js";
 import type { TodoStatus } from "./store.js";
 
 export const router = express.Router();
 
 function handler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>,
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
 ) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       let nextCalled = false;
-      const result = await fn(req, res, (...args) => {
+      const result = await fn(req, res, (err?) => {
         nextCalled = true;
-        next(...args);
+        if (err !== undefined) {
+          next(err);
+        } else {
+          next();
+        }
       });
 
       if (nextCalled) {
         return;
-      } else if (result && isFinite(result.status)) {
+      } else if (isTodoError(result)) {
         res.status(result.status).json(result);
       } else {
         res.json(result);

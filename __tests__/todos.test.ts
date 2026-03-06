@@ -7,7 +7,7 @@ import {
   test,
 } from "bun:test";
 import request from "supertest";
-import app from "../server/app.js";
+import { app } from "../server/app.js";
 import * as todos from "../server/components/todos/store.js";
 
 describe("Todos", () => {
@@ -52,24 +52,24 @@ describe("Todos", () => {
     expect(updateResult.name).toBe(readResult.name);
     expect(updateResult.status).toBe("complete");
     expect(
-      new Date(updateResult.updated_date) > new Date(updateResult.created_date),
+      new Date(updateResult.updatedDate) > new Date(updateResult.createdDate),
     ).toBe(true);
     expect(
-      new Date(updateResult.updated_date) > new Date(readResult.updated_date),
+      new Date(updateResult.updatedDate) > new Date(readResult.updatedDate),
     ).toBe(true);
 
     await request(app).delete(`/api/todos/${todoId}`).send().expect(200);
   });
 
   test("Create and read multiple todos", async () => {
-    const todos = [
+    const todoNames = [
       "Take out the trash",
       "Vacuum downstairs",
       "Fold the laundry",
     ];
 
-    for (const todo of todos) {
-      await request(app).post("/api/todos").send({ name: todo }).expect(200);
+    for (const name of todoNames) {
+      await request(app).post("/api/todos").send({ name }).expect(200);
     }
 
     const { body: allTodos } = await request(app)
@@ -77,10 +77,10 @@ describe("Todos", () => {
       .send()
       .expect(200);
 
-    expect(allTodos.total).toBe(todos.length);
+    expect(allTodos.total).toBe(todoNames.length);
 
     for (const todo of allTodos.documents) {
-      expect(todos).toContain(todo.value.name);
+      expect(todoNames).toContain(todo.value.name);
     }
   });
 });

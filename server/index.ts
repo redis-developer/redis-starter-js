@@ -1,5 +1,5 @@
 import "dotenv/config";
-import app, { initialize } from "./app.js";
+import { app, initialize } from "./app.js";
 
 const port = process.env.PORT ?? 8080;
 

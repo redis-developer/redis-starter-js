@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid";
-import redis from "../../redis.js";
-import { RedisJSON, SCHEMA_FIELD_TYPE } from "redis";
+import { redis } from "../../redis.js";
+import { SCHEMA_FIELD_TYPE } from "redis";
+import type { RedisJSON } from "redis";
 
 /**
  * An error object
@@ -15,8 +16,8 @@ export type TodoStatus = "todo" | "in progress" | "complete";
 export interface Todo {
   name: string;
   status: TodoStatus;
-  created_date: string;
-  updated_date: string;
+  createdDate: string;
+  updatedDate: string;
 }
 
 export interface TodoDocument {
@@ -29,6 +30,16 @@ export interface Todos {
   documents: TodoDocument[];
 }
 
+/** Checks whether a value is a TodoError response */
+export function isTodoError(value: unknown): value is TodoError {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "status" in value &&
+    typeof (value as Record<string, unknown>).status === "number"
+  );
+}
+
 const TODOS_INDEX = "todos-idx";
 const TODOS_PREFIX = "todos:";
 
@@ -38,9 +49,7 @@ const TODOS_PREFIX = "todos:";
 async function haveIndex(): Promise<boolean> {
   const indexes = await redis.ft._list();
 
-  return indexes.some((index) => {
-    return index === TODOS_INDEX;
-  });
+  return indexes.includes(TODOS_INDEX);
 }
 
 /**
@@ -93,9 +102,7 @@ function formatId(id: string): string {
   return TODO_REGEXP.test(id) ? id : `${TODOS_PREFIX}${id}`;
 }
 
-/**
- * Gets all todos}
- */
+/** Gets all todos */
 export async function all(): Promise<Todos> {
   const results = await redis.ft.search(TODOS_INDEX, "*");
 
@@ -105,7 +112,7 @@ export async function all(): Promise<Todos> {
 /**
  * Gets a todo by id
  */
-export async function one(id: string): Promise<Todo | TodoError | null> {
+export async function one(id: string): Promise<Todo | TodoError> {
   const todo = await redis.json.get(formatId(id));
 
   if (!todo) {
@@ -119,7 +126,7 @@ export async function one(id: string): Promise<Todo | TodoError | null> {
  * Searches for todos by name and/or status
  */
 export async function search(name: string, status: TodoStatus): Promise<Todos> {
-  const searches = [];
+  const searches: string[] = [];
 
   if (name) {
     searches.push(`@name:(${name})`);
@@ -152,8 +159,8 @@ export async function create(
     value: {
       name,
       status: "todo",
-      created_date: date.toISOString(),
-      updated_date: date.toISOString(),
+      createdDate: date.toISOString(),
+      updatedDate: date.toISOString(),
     },
   };
 
@@ -181,15 +188,19 @@ export async function update(
 
   const todoOrError = await one(id);
 
-  if (!todoOrError || isFinite(todoOrError.status as number)) {
+  if (!todoOrError || isTodoError(todoOrError)) {
     return { status: 404, message: "Not Found" };
   }
 
-  const todo = todoOrError as Todo;
+  const todo = todoOrError;
   todo.status = status;
-  todo.updated_date = date.toISOString();
+  todo.updatedDate = date.toISOString();
 
-  const result = await redis.json.set(formatId(id), "$", todo as any);
+  const result = await redis.json.set(
+    formatId(id),
+    "$",
+    todo as unknown as RedisJSON,
+  );
 
   if (result?.toUpperCase() === "OK") {
     return todo;

@@ -5,7 +5,7 @@ export async function initialize() {
   await todos.initialize();
 }
 
-const app = express();
+export const app = express();
 
 app.use((req, res, next) => {
   if (["POST", "PUT", "PATCH"].includes(req.method)) {
@@ -15,5 +15,3 @@ app.use((req, res, next) => {
   }
 });
 app.use("/api/todos", todos.router);
-
-export default app;
